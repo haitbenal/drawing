@@ -32,3 +32,25 @@ impl Drawable for Point {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn random_points_stay_within_dimensions() {
+        for _ in 0..1000 {
+            let point = Point::random(1000, 800);
+            assert!(point.x >= 0 && point.x < 1000);
+            assert!(point.y >= 0 && point.y < 800);
+        }
+    }
+
+    #[test]
+    fn random_points_stay_within_tiny_dimensions() {
+        for _ in 0..100 {
+            let point = Point::random(1, 1);
+            assert!(point.x >= 0 && point.x < 1);
+            assert!(point.y >= 0 && point.y < 1);
+        }
+    }
+}
