@@ -18,11 +18,6 @@ pub trait Drawable {
     fn color(&self) -> Color;
 }
 
-#[allow(dead_code)]
-pub trait Displayable {
-    fn display(&mut self, x: i32, y: i32, color: Color);
-}
-
 pub(crate) fn display_pixel(image: &mut Image, x: i32, y: i32, color: Color) {
     if x >= 0 && x < image.width && y >= 0 && y < image.height {
         image.set_pixel(x, y, color).unwrap();
