@@ -61,3 +61,52 @@ pub(crate) fn draw_line(image: &mut Image, from: &Point, to: &Point, color: &Col
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::super::assert_same_color;
+    use super::*;
+
+    #[test]
+    fn random_lines_stay_within_dimensions() {
+        for _ in 0..1000 {
+            let line = Line::random(640, 480);
+            assert!(line.from.x >= 0 && line.from.x < 640);
+            assert!(line.from.y >= 0 && line.from.y < 480);
+            assert!(line.to.x >= 0 && line.to.x < 640);
+            assert!(line.to.y >= 0 && line.to.y < 480);
+        }
+    }
+
+    #[test]
+    fn line_with_identical_points_draws_a_single_pixel() {
+        let mut image = Image::blank(10, 10);
+        let line = Line::new(&Point::new(5, 5), &Point::new(5, 5));
+        line.draw(&mut image);
+
+        let mut drawn = 0;
+        for y in 0..image.height {
+            for x in 0..image.width {
+                let pixel = image.get_pixel(x, y).unwrap();
+                if pixel.r != 0 || pixel.g != 0 || pixel.b != 0 {
+                    drawn += 1;
+                }
+            }
+        }
+
+        assert_eq!(drawn, 1);
+        let pixel = image.get_pixel(5, 5).unwrap();
+        assert_same_color(&line.color(), &pixel);
+    }
+
+    #[test]
+    fn horizontal_line_is_contiguous() {
+        let mut image = Image::blank(20, 20);
+        let line = Line::new(&Point::new(2, 7), &Point::new(17, 7));
+        line.draw(&mut image);
+
+        for x in 2..=17 {
+            let pixel = image.get_pixel(x, 7).unwrap();
+            assert_same_color(&line.color(), &pixel);
+        }
+    }
+}
